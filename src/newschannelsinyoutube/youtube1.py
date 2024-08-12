@@ -3,7 +3,7 @@ from tkinter import scrolledtext, ttk
 from googleapiclient.discovery import build
 
 # Replace with your own API key
-API_KEY = 'AIzaSyCC74lgrUF4dIAWMyOM1_3kpOOwGKFzsKg'
+API_KEY = '###########################'
 
 # Initialize YouTube API client
 youtube = build('youtube', 'v3', developerKey=API_KEY)
