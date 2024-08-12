@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from googleapiclient.discovery import build
 import webbrowser
 
@@ -35,58 +35,70 @@ class YouTubeApp:
     def __init__(self, root):
         self.root = root
         self.root.title('YouTube News Channels')
-        
-        # Search Frame
-        search_frame = ttk.Frame(self.root, padding="10")
-        search_frame.pack(fill='x')
-        
-        # Search Entry
+        self.root.geometry('1000x600')
+        self.root.configure(bg='#f0f0f0')
+
+        # Create a Frame for the UI
+        frame = ttk.Frame(self.root, padding="10")
+        frame.pack(fill='both', expand=True)
+
+        # Add a Button to start the search
+        search_frame = ttk.Frame(frame)
+        search_frame.pack(pady=5)
+
         self.search_entry = ttk.Entry(search_frame, width=50)
-        self.search_entry.pack(side='left', padx=5)
-        
-        # Search Button
+        self.search_entry.pack(side=tk.LEFT, padx=5)
+
         search_button = ttk.Button(search_frame, text="Search", command=self.search_channels)
-        search_button.pack(side='left')
-        
-        # Results Frame
-        self.results_frame = ttk.Frame(self.root)
-        self.results_frame.pack(padx=10, pady=10)
-        
-        # Scrollbar
-        self.scrollbar = ttk.Scrollbar(self.results_frame)
-        self.scrollbar.pack(side='right', fill='y')
-        
-        # Results Text Widget
-        self.results_text = tk.Text(self.results_frame, wrap='word', height=20, width=80, yscrollcommand=self.scrollbar.set)
-        self.results_text.pack(side='left')
-        self.scrollbar.config(command=self.results_text.yview)
-        
+        search_button.pack(side=tk.LEFT)
+
+        # Add a Treeview to display the results
+        columns = ('Channel ID', 'Title', 'Language', 'Country', 'Open Channel')
+        self.tree = ttk.Treeview(frame, columns=columns, show='headings')
+        self.tree.pack(padx=5, pady=5, fill='both', expand=True)
+
+        # Define the column headings
+        for col in columns:
+            self.tree.heading(col, text=col)
+            self.tree.column(col, width=150)
+
+        # Add style to Treeview
+        style = ttk.Style()
+        style.configure('Treeview', background='#ffffff', foreground='#000000', rowheight=25, fieldbackground='#ffffff')
+        style.configure('Treeview.Heading', background='#e0e0e0', font=('Arial', 10, 'bold'))
+
+        # Bind double-click event to open link
+        self.tree.bind('<Double-1>', self.open_link)
+
         # Load initial data
         self.load_data()
 
     def load_data(self):
         channels = get_news_channels(API_KEY)
-        self.display_channels(channels)
+        self.update_treeview(channels)
     
     def search_channels(self):
         keyword = self.search_entry.get()
         channels = get_news_channels(API_KEY, keyword=keyword)
-        self.display_channels(channels)
+        self.update_treeview(channels)
 
-    def display_channels(self, channels):
-        self.results_text.delete('1.0', tk.END)
+    def update_treeview(self, channels):
+        self.tree.delete(*self.tree.get_children())
         for channel in channels:
-            self.results_text.insert(tk.END, "Channel Details:\n")
-            for key, value in channel.items():
-                self.results_text.insert(tk.END, f"{key}: {value}\n")
-            
-            # Add the open link button
-            channel_link = channel['Channel Link']
-            open_button = ttk.Button(self.results_text, text="Open Channel", command=lambda link=channel_link: webbrowser.open(link))
-            self.results_text.window_create(tk.END, window=open_button)
-            
-            self.results_text.insert(tk.END, "\n" + "="*40 + "\n")
-        self.results_text.yview(tk.END)
+            self.tree.insert('', tk.END, values=(
+                channel['Channel ID'],
+                channel['Title'],
+                channel['Language'],
+                channel['Country'],
+                'Open Channel'
+            ))
+
+    def open_link(self, event):
+        selected_item = self.tree.selection()
+        if selected_item:
+            item = self.tree.item(selected_item)
+            url = f"https://www.youtube.com/channel/{item['values'][0]}"
+            webbrowser.open(url)
 
 if __name__ == "__main__":
     root = tk.Tk()
