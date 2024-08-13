@@ -4,7 +4,7 @@ from googleapiclient.discovery import build
 import webbrowser
 
 # Replace with your actual API key
-API_KEY = 'AIzaSyCC74lgrUF4dIAWMyOM1_3kpOOwGKFzsKg'
+API_KEY = '############################'
 
 def get_news_channels(api_key, region_code='IN', max_results=50, keyword='news'):
     youtube = build('youtube', 'v3', developerKey=api_key)
