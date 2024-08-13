@@ -21,3 +21,26 @@ You can install missing dependencies using pip:
 ```bash
 pip install requests beautifulsoup4
 
+# YouTube News Channels Search Application
+
+This Python application uses Tkinter for the graphical user interface (GUI) and the YouTube Data API to fetch and display information about YouTube news channels. The application allows users to search for channels by keyword and view the channel details, including the ability to open the channel directly in a web browser.
+
+## Features
+
+- **Search YouTube News Channels**: Users can enter a keyword to search for YouTube channels related to news.
+- **Display Channel Information**: The application displays the Channel ID, Title, Language, Country, and a link to open the channel.
+- **Interactive Interface**: Users can double-click on a channel entry to open the channel in their default web browser.
+
+## Dependencies
+
+The following Python libraries are required for this application:
+
+- `tkinter`: Standard Python interface to the Tk GUI toolkit.
+- `googleapiclient`: Python client library for accessing Google APIs, including the YouTube Data API.
+- `webbrowser`: Python library for opening web pages.
+
+You can install the `googleapiclient` library using pip:
+
+```bash
+pip install google-api-python-client
+
